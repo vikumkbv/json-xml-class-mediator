@@ -1,0 +1,40 @@
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="class-mediator">
+
+    <property expression="json-eval($.)" name="JSONPayload" scope="default" type="STRING"/>
+
+    <class name="org.example.SimpleClassMediator"/>
+
+
+
+    <property name="accountnumberextract" expression="get-property('ACAC_ACC_NO')"/>
+
+    <payloadFactory description="transform" media-type="xml">
+        <format>
+            <soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:faw="http://trizetto.com/fxi/isl/FaWsvcInpClaimSubmission_v24">
+                <soapenv:Header/>
+                <soapenv:Body>
+                    <faw:ProcessMemberDeductible_v3_SubscriberKey>
+                        <faw:pConfig>
+                            <faw:FacetsIdentity>test</faw:FacetsIdentity>
+                            <faw:Region>testtt</faw:Region>
+                        </faw:pConfig>
+                        <faw:pAS_OF_DATE>test</faw:pAS_OF_DATE>
+
+                        <faw:pACAC_COLL>
+                            $1
+                        </faw:pACAC_COLL>
+                    </faw:ProcessMemberDeductible_v3_SubscriberKey>
+
+                </soapenv:Body>
+            </soapenv:Envelope>
+        </format>
+        <args>
+            <arg evaluator="xml" expression="get-property('accountnumberextract')"/>
+        </args>
+    </payloadFactory>
+
+
+    <property description="messageProperty" name="messageType" scope="axis2" type="STRING" value="application/soap+xml"/>
+    <property name="ContentType" scope="axis2" type="STRING" value="application/soap+xml"/>
+
+</sequence>
